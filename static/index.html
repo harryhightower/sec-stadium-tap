@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SEC Stadium Tap</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --panel2: #21262d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f97316;
+    --accent2: #f59e0b;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --border: #30363d;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
+  body { overflow: hidden; }
+  #app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+  header { background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 14px;
+    display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  header h1 { font-size: 15px; margin: 0; font-weight: 700; letter-spacing: 0.3px; }
+  header h1 .pill { background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px;
+    margin-right: 6px; font-size: 11px; font-weight: 800; }
+  .tabs { display: flex; gap: 4px; }
+  .tab { background: transparent; color: var(--muted); border: 1px solid var(--border);
+    padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+  .tab.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  main { flex: 1; overflow-y: auto; position: relative; }
+  .view { display: none; padding: 16px; }
+  .view.active { display: block; }
+  .view#game { padding: 0; display: none; }
+  .view#game.active { display: flex; flex-direction: column; height: 100%; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; margin-bottom: 12px; }
+  .card h2 { margin: 0 0 10px 0; font-size: 16px; }
+  .target { background: var(--panel); border: 1px solid var(--border); padding: 12px 14px;
+    text-align: center; }
+  .target .label { font-size: 11px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1.2px; margin-bottom: 4px; }
+  .target .stadium { font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .target .team { font-size: 13px; color: var(--accent); margin-top: 2px; }
+  #map { flex: 1; min-height: 300px; width: 100%; background: #1a1a1a; }
+  .actions { background: var(--panel); border-top: 1px solid var(--border);
+    padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
+  .actions .hint { font-size: 12px; color: var(--muted); flex: 1; }
+  button.primary { background: var(--accent); color: #000; border: none; padding: 10px 18px;
+    border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; }
+  button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border);
+    padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  input { width: 100%; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; font-size: 15px; margin-bottom: 10px; }
+  input:focus { outline: none; border-color: var(--accent); }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.8px; }
+  .error { color: var(--bad); font-size: 13px; margin-top: 6px; min-height: 18px; }
+  /* Modal */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex;
+    align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+  .overlay.hidden { display: none; }
+  .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+    max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 18px; }
+  .result-big { text-align: center; padding: 8px 0 14px; }
+  .result-big .dist { font-size: 32px; font-weight: 800; color: var(--accent); }
+  .result-big .label-sm { font-size: 12px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1px; }
+  .score-line { display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 14px; }
+  .score-line:last-child { border-bottom: none; font-weight: 700; font-size: 16px; }
+  .unlocked-badge { background: var(--good); color: #000; padding: 6px 10px; border-radius: 6px;
+    font-weight: 700; font-size: 13px; display: inline-block; margin: 10px 0; }
+  .missed-badge { background: var(--panel2); color: var(--muted); padding: 6px 10px;
+    border-radius: 6px; font-size: 13px; display: inline-block; margin: 10px 0; }
+  /* Trivia */
+  .q-block { background: var(--panel2); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+  .q-diff { font-size: 10px; color: var(--accent2); text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 700; }
+  .q-text { font-size: 14px; margin: 4px 0 10px; }
+  .opt { display: block; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px; margin-bottom: 6px; cursor: pointer; font-size: 13px; }
+  .opt:hover { border-color: var(--accent); }
+  .opt.selected { background: var(--accent); color: #000; border-color: var(--accent);
+    font-weight: 600; }
+  .opt.correct-reveal { background: rgba(34, 197, 94, 0.2); border-color: var(--good); }
+  .opt.wrong-reveal { background: rgba(239, 68, 68, 0.15); border-color: var(--bad); }
+  /* Leaderboard */
+  .lb-row { display: grid; grid-template-columns: 30px 1fr 90px 60px; gap: 8px;
+    padding: 10px 8px; border-bottom: 1px solid var(--border); align-items: center; font-size: 14px; }
+  .lb-row.head { color: var(--muted); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.8px; }
+  .lb-rank { font-weight: 700; color: var(--accent); }
+  .lb-score { text-align: right; font-weight: 700; }
+  .lb-days { text-align: right; color: var(--muted); }
+  /* History */
+  .hist-row { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; }
+  .hist-top { display: flex; justify-content: space-between; align-items: baseline; }
+  .hist-stadium { font-weight: 600; font-size: 14px; }
+  .hist-date { font-size: 11px; color: var(--muted); }
+  .hist-detail { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .hist-score { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1><span class="pill">SEC</span>Stadium Tap</h1>
+    <div class="tabs" id="tabs" style="display:none;">
+      <button class="tab active" data-view="game">Today</button>
+      <button class="tab" data-view="leaderboard">Board</button>
+      <button class="tab" data-view="history">History</button>
+    </div>
+  </header>
+  <main>
+    <!-- JOIN VIEW -->
+    <section class="view active" id="join">
+      <div class="card">
+        <h2>Join the game</h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 14px;">
+          Each day everyone gets the same SEC stadium.  Drop a pin within 5km of the real spot
+          to unlock 3 trivia questions and a score multiplier.  Best total score wins bragging rights.
+        </p>
+        <label>Your name</label>
+        <input id="join-name" placeholder="e.g. John" maxlength="30">
+        <label>Invite code</label>
+        <input id="join-code" placeholder="ask the group" autocomplete="off">
+        <button class="primary" id="join-btn" style="width:100%;">Join</button>
+        <div class="error" id="join-err"></div>
+      </div>
+    </section>
+
+    <!-- GAME VIEW -->
+    <section class="view" id="game">
+      <div class="target">
+        <div class="label">Today's stadium</div>
+        <div class="stadium" id="t-stadium"></div>
+        <div class="team" id="t-team"></div>
+      </div>
+      <div id="map"></div>
+      <div class="actions">
+        <div class="hint" id="hint">Tap the map to drop your pin</div>
+        <button class="primary" id="submit-btn" disabled>Submit guess</button>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD VIEW -->
+    <section class="view" id="leaderboard">
+      <div class="card">
+        <h2>Leaderboard</h2>
+        <div class="lb-row head">
+          <div>#</div><div>Name</div><div class="lb-score">Total</div><div class="lb-days">Days</div>
+        </div>
+        <div id="lb-body"></div>
+      </div>
+    </section>
+
+    <!-- HISTORY VIEW -->
+    <section class="view" id="history">
+      <div class="card">
+        <h2>Your history</h2>
+        <div id="hist-body"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay hidden" id="result-overlay">
+  <div class="modal">
+    <div class="result-big">
+      <div class="dist" id="r-dist"></div>
+      <div class="label-sm">from <span id="r-stadium"></span></div>
+    </div>
+    <div id="r-unlock"></div>
+    <div id="r-trivia-area"></div>
+    <div id="r-summary" style="display:none;">
+      <div class="score-line"><span>Distance score</span><span id="s-base"></span></div>
+      <div class="score-line"><span>Trivia correct</span><span id="s-correct"></span></div>
+      <div class="score-line"><span>Multiplier</span><span id="s-mult"></span></div>
+      <div class="score-line"><span>Final score</span><span id="s-final"></span></div>
+      <button class="primary" id="done-btn" style="width:100%; margin-top:12px;">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const API = "";  // same origin
+let token = localStorage.getItem("sst_token");
+let playerName = localStorage.getItem("sst_name") || "";
+let map, guessMarker, stadiumMarker, line, circle;
+let currentGuess = null;
+let triviaSelections = [null, null, null];
+let todayState = null;
+
+function $(id) { return document.getElementById(id); }
+
+async function api(path, opts = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = "Bearer " + token;
+  const res = await fetch(API + path, { ...opts, headers });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Error" }));
+    throw new Error(err.detail || "Error");
+  }
+  return res.json();
+}
+
+// JOIN
+$("join-btn").addEventListener("click", async () => {
+  const name = $("join-name").value.trim();
+  const code = $("join-code").value.trim();
+  $("join-err").textContent = "";
+  if (!name || !code) { $("join-err").textContent = "Both fields required"; return; }
+  try {
+    const r = await api("/api/join", { method: "POST",
+      body: JSON.stringify({ name, invite_code: code }) });
+    token = r.token; playerName = r.name;
+    localStorage.setItem("sst_token", token);
+    localStorage.setItem("sst_name", playerName);
+    showApp();
+  } catch (e) { $("join-err").textContent = e.message; }
+});
+
+function showApp() {
+  $("tabs").style.display = "flex";
+  switchView("game");
+  loadToday();
+}
+
+// TABS
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => switchView(t.dataset.view));
+});
+function switchView(name) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  $(name).classList.add("active");
+  document.querySelector(`.tab[data-view="${name}"]`)?.classList.add("active");
+  if (name === "game") { setTimeout(() => map && map.invalidateSize(), 100); }
+  if (name === "leaderboard") loadLeaderboard();
+  if (name === "history") loadHistory();
+}
+
+// MAP
+function initMap() {
+  if (map) return;
+  map = L.map("map", { zoomControl: true, attributionControl: false }).setView([33, -88], 5);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    maxZoom: 18, subdomains: "abcd"
+  }).addTo(map);
+  map.on("click", (e) => {
+    if (todayState && todayState.played) return;
+    if (guessMarker) map.removeLayer(guessMarker);
+    guessMarker = L.marker(e.latlng).addTo(map);
+    currentGuess = e.latlng;
+    $("submit-btn").disabled = false;
+    $("hint").textContent = "Tap again to move your pin";
+  });
+}
+
+// LOAD TODAY
+async function loadToday() {
+  initMap();
+  try {
+    todayState = await api("/api/today");
+    $("t-stadium").textContent = todayState.stadium_name;
+    $("t-team").textContent = todayState.team;
+    if (todayState.played) {
+      renderPlayed(todayState);
+    } else {
+      $("hint").textContent = "Tap the map to drop your pin";
+      $("submit-btn").disabled = true;
+      $("submit-btn").textContent = "Submit guess";
+      clearMapLayers();
+    }
+  } catch (e) {
+    if (e.message.includes("token") || e.message.includes("Invalid")) {
+      localStorage.removeItem("sst_token");
+      location.reload();
+    }
+  }
+}
+
+function clearMapLayers() {
+  [guessMarker, stadiumMarker, line, circle].forEach(l => l && map.removeLayer(l));
+  guessMarker = stadiumMarker = line = circle = null;
+  currentGuess = null;
+}
+
+function renderPlayed(state) {
+  clearMapLayers();
+  const r = state.result;
+  guessMarker = L.marker([r.guess_lat, r.guess_lng]).addTo(map);
+  stadiumMarker = L.marker([r.stadium_lat, r.stadium_lng],
+    { icon: L.divIcon({ className: "", html:
+      `<div style="background:#22c55e;width:14px;height:14px;border-radius:50%;border:2px solid #fff;"></div>`,
+      iconSize: [14,14], iconAnchor: [7,7] }) }).addTo(map);
+  line = L.polyline([[r.guess_lat, r.guess_lng], [r.stadium_lat, r.stadium_lng]],
+    { color: "#f97316", weight: 2, dashArray: "5,8" }).addTo(map);
+  map.fitBounds(line.getBounds(), { padding: [40, 40] });
+  $("hint").textContent =
+    `${r.distance_km.toFixed(2)} km · ${r.final_score} pts · come back tomorrow`;
+  $("submit-btn").disabled = true;
+  $("submit-btn").textContent = "Played";
+}
+
+// SUBMIT GUESS
+$("submit-btn").addEventListener("click", async () => {
+  if (!currentGuess) return;
+  $("submit-btn").disabled = true;
+  $("submit-btn").textContent = "Submitting...";
+  try {
+    const r = await api("/api/guess", { method: "POST",
+      body: JSON.stringify({ lat: currentGuess.lat, lng: currentGuess.lng }) });
+    showResult(r);
+  } catch (e) {
+    alert(e.message);
+    $("submit-btn").disabled = false;
+    $("submit-btn").textContent = "Submit guess";
+  }
+});
+
+// RESULT FLOW
+function showResult(r) {
+  // draw real spot
+  stadiumMarker = L.marker([r.stadium_lat, r.stadium_lng],
+    { icon: L.divIcon({ className: "", html:
+      `<div style="background:#22c55e;width:14px;height:14px;border-radius:50%;border:2px solid #fff;"></div>`,
+      iconSize: [14,14], iconAnchor: [7,7] }) }).addTo(map);
+  line = L.polyline([[currentGuess.lat, currentGuess.lng], [r.stadium_lat, r.stadium_lng]],
+    { color: "#f97316", weight: 2, dashArray: "5,8" }).addTo(map);
+  map.fitBounds(line.getBounds(), { padding: [40, 40] });
+
+  $("r-dist").textContent = r.distance_km.toFixed(2) + " km";
+  $("r-stadium").textContent = r.stadium_name;
+  $("r-summary").style.display = "none";
+  $("r-trivia-area").innerHTML = "";
+
+  if (r.unlocked) {
+    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 5km — trivia unlocked</div>`;
+    renderTrivia(r.trivia, r.base_score);
+  } else {
+    $("r-unlock").innerHTML = `<div class="missed-badge">Not within 5km, no trivia bonus</div>`;
+    // immediately show summary with base only
+    finalizeNoTrivia(r.base_score);
+  }
+  $("result-overlay").classList.remove("hidden");
+}
+
+function renderTrivia(trivia, baseScore) {
+  triviaSelections = [null, null, null];
+  const area = $("r-trivia-area");
+  area.innerHTML = "";
+  trivia.forEach((q, i) => {
+    const block = document.createElement("div");
+    block.className = "q-block";
+    block.innerHTML = `
+      <div class="q-diff">${q.difficulty.replace("_", " ")}</div>
+      <div class="q-text">${q.question}</div>
+      <div class="opts" data-q="${i}">
+        ${q.options.map(o => `<div class="opt" data-val="${o.replace(/"/g, '&quot;')}">${o}</div>`).join("")}
+      </div>
+    `;
+    area.appendChild(block);
+  });
+  area.querySelectorAll(".opt").forEach(el => {
+    el.addEventListener("click", () => {
+      const qIdx = parseInt(el.parentElement.dataset.q);
+      const val = el.dataset.val;
+      el.parentElement.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
+      el.classList.add("selected");
+      triviaSelections[qIdx] = val;
+      checkTriviaReady(baseScore);
+    });
+  });
+}
+
+function checkTriviaReady(baseScore) {
+  if (triviaSelections.every(a => a !== null)) {
+    if ($("submit-trivia-btn")) return;
+    const btn = document.createElement("button");
+    btn.className = "primary";
+    btn.id = "submit-trivia-btn";
+    btn.style.width = "100%";
+    btn.textContent = "Submit answers";
+    btn.addEventListener("click", () => submitTrivia(baseScore));
+    $("r-trivia-area").appendChild(btn);
+  }
+}
+
+async function submitTrivia(baseScore) {
+  $("submit-trivia-btn").disabled = true;
+  $("submit-trivia-btn").textContent = "Scoring...";
+  try {
+    const r = await api("/api/trivia", { method: "POST",
+      body: JSON.stringify({ answers: triviaSelections }) });
+    // reveal correct answers visually
+    document.querySelectorAll(".opts").forEach((opts, i) => {
+      const fb = r.feedback[i];
+      opts.querySelectorAll(".opt").forEach(o => {
+        if (o.dataset.val === fb.correct_answer) o.classList.add("correct-reveal");
+        if (o.dataset.val === fb.your_answer && !fb.correct) o.classList.add("wrong-reveal");
+      });
+    });
+    $("submit-trivia-btn").remove();
+    $("s-base").textContent = baseScore + " pts";
+    $("s-correct").textContent = `${r.correct} / 3`;
+    $("s-mult").textContent = "x " + r.multiplier.toFixed(2);
+    $("s-final").textContent = r.final_score + " pts";
+    $("r-summary").style.display = "block";
+  } catch (e) { alert(e.message); }
+}
+
+function finalizeNoTrivia(baseScore) {
+  $("s-base").textContent = baseScore + " pts";
+  $("s-correct").textContent = "n/a";
+  $("s-mult").textContent = "x 1.00";
+  $("s-final").textContent = baseScore + " pts";
+  $("r-summary").style.display = "block";
+}
+
+$("done-btn").addEventListener("click", () => {
+  $("result-overlay").classList.add("hidden");
+  loadToday();
+});
+
+// LEADERBOARD
+async function loadLeaderboard() {
+  try {
+    const rows = await api("/api/leaderboard");
+    const body = $("lb-body");
+    if (!rows.length) { body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No scores yet.  Be the first.</p>`; return; }
+    body.innerHTML = rows.map((r, i) => `
+      <div class="lb-row">
+        <div class="lb-rank">${i + 1}</div>
+        <div>${r.name}</div>
+        <div class="lb-score">${r.total_score}</div>
+        <div class="lb-days">${r.days_played}</div>
+      </div>`).join("");
+  } catch (e) { console.error(e); }
+}
+
+// HISTORY
+async function loadHistory() {
+  try {
+    const rows = await api("/api/history");
+    const body = $("hist-body");
+    if (!rows.length) { body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No plays yet.</p>`; return; }
+    body.innerHTML = rows.map(r => `
+      <div class="hist-row">
+        <div class="hist-top">
+          <span class="hist-stadium">${r.stadium_name}</span>
+          <span class="hist-date">${r.play_date}</span>
+        </div>
+        <div class="hist-detail">
+          ${r.distance_km.toFixed(2)} km · base ${r.base_score} ·
+          ${r.trivia_submitted ? `${r.trivia_correct}/3 correct · x${r.multiplier.toFixed(2)}` : "no trivia"} ·
+          <span class="hist-score">${r.final_score} pts</span>
+        </div>
+      </div>`).join("");
+  } catch (e) { console.error(e); }
+}
+
+// BOOT
+if (token) { showApp(); }
+</script>
+</body>
+</html>
