@@ -170,7 +170,7 @@
       <div class="card">
         <h2>Join the game</h2>
         <p style="color: var(--muted); font-size: 13px; margin: 0 0 14px;">
-          16 SEC stadiums.  For each one, drop a pin where you think it is.  Get within 5km
+          16 SEC stadiums.  For each one, drop a pin where you think it is.  Get within 10km
           and you unlock 3 trivia questions that boost your score.  Total across all 16 is
           your leaderboard score.
         </p>
@@ -322,7 +322,7 @@ async function initMap() {
     zoomControl: true,
     attributionControl: false,
     minZoom: 2,
-    maxZoom: 5,
+    maxZoom: 8,
     worldCopyJump: true,
     maxBounds: [[-85, -200], [85, 200]],
   }).setView([20, 0], 2);
@@ -459,7 +459,7 @@ function showResult(r) {
   line = L.polyline([[currentGuess.lat, currentGuess.lng], [r.stadium_lat, r.stadium_lng]],
     { color: "#f97316", weight: 2, dashArray: "5,8" }).addTo(map);
   try {
-    map.fitBounds(line.getBounds(), { padding: [40, 40], maxZoom: 5 });
+    map.fitBounds(line.getBounds(), { padding: [40, 40], maxZoom: 8 });
   } catch (e) {}
 
   $("r-dist").textContent = r.distance_km.toFixed(2) + " km";
@@ -468,10 +468,10 @@ function showResult(r) {
   $("r-trivia-area").innerHTML = "";
 
   if (r.unlocked) {
-    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 5km, trivia unlocked</div>`;
+    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 10km, trivia unlocked</div>`;
     renderTrivia(r.trivia, r.base_score, r.stadium_key);
   } else {
-    $("r-unlock").innerHTML = `<div class="missed-badge">Not within 5km, no trivia bonus</div>`;
+    $("r-unlock").innerHTML = `<div class="missed-badge">Not within 10km, no trivia bonus</div>`;
     finalizeNoTrivia(r.base_score);
   }
   $("result-overlay").classList.remove("hidden");

@@ -155,7 +155,7 @@ def stadiums_list(player=Depends(get_player)):
                 "trivia_submitted": bool(a["trivia_submitted"]),
                 "multiplier": a["multiplier"],
                 "final_score": a["final_score"],
-                "unlocked": a["distance_km"] <= 5.0,
+                "unlocked": a["distance_km"] <= 10.0,
             }
         out.append(entry)
     return out
@@ -183,7 +183,7 @@ def guess(req: GuessRequest, player=Depends(get_player)):
     stadium = STADIUMS[req.stadium_key]
     distance = haversine(req.lat, req.lng, stadium["lat"], stadium["lng"])
     base_score = calc_base_score(distance)
-    unlocked = distance <= 5.0
+    unlocked = distance <= 10.0
 
     conn.execute(
         """INSERT INTO attempts
@@ -241,9 +241,9 @@ def submit_trivia(req: TriviaRequest, player=Depends(get_player)):
     if attempt["trivia_submitted"]:
         conn.close()
         raise HTTPException(400, "Trivia already submitted for this stadium")
-    if attempt["distance_km"] > 5.0:
+    if attempt["distance_km"] > 10.0:
         conn.close()
-        raise HTTPException(400, "Did not unlock trivia (not within 5km)")
+        raise HTTPException(400, "Did not unlock trivia (not within 10km)")
 
     questions = TRIVIA[req.stadium_key]["questions"]
     correct = sum(1 for q, a in zip(questions, req.answers) if q["answer"] == a)
