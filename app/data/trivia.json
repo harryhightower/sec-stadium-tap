@@ -1,0 +1,386 @@
+{
+  "alabama": {
+    "team": "Alabama Crimson Tide",
+    "stadium": "Bryant-Denny Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Alabama's home football stadium?",
+        "options": ["Bryant-Denny Stadium", "Tiger Stadium", "Jordan-Hare Stadium", "Neyland Stadium"],
+        "answer": "Bryant-Denny Stadium"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Who coached Alabama to six national championships between 2009 and 2020?",
+        "options": ["Bear Bryant", "Gene Stallings", "Nick Saban", "Kalen DeBoer"],
+        "answer": "Nick Saban"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "In what year did Bear Bryant win his first national championship as Alabama's head coach?",
+        "options": ["1958", "1961", "1965", "1972"],
+        "answer": "1961"
+      }
+    ]
+  },
+  "arkansas": {
+    "team": "Arkansas Razorbacks",
+    "stadium": "Donald W. Reynolds Razorback Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What chant is famously yelled by Arkansas fans?",
+        "options": ["Roll Tide", "Woo Pig Sooie", "Geaux Tigers", "Hotty Toddy"],
+        "answer": "Woo Pig Sooie"
+      },
+      {
+        "difficulty": "medium",
+        "question": "From what conference did Arkansas join the SEC in 1992?",
+        "options": ["Big 8", "Southwest Conference", "Big 12", "Conference USA"],
+        "answer": "Southwest Conference"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "What is the trophy game between Arkansas and LSU called?",
+        "options": ["The Golden Boot", "The Egg Bowl", "The Iron Bowl", "The Battle Line Rivalry"],
+        "answer": "The Golden Boot"
+      }
+    ]
+  },
+  "auburn": {
+    "team": "Auburn Tigers",
+    "stadium": "Jordan-Hare Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is Auburn's two-word battle cry?",
+        "options": ["Go Tigers", "War Eagle", "Hotty Toddy", "Roll Tide"],
+        "answer": "War Eagle"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the Auburn vs. Alabama rivalry game called?",
+        "options": ["Egg Bowl", "Iron Bowl", "Sugar Bowl", "Magnolia Bowl"],
+        "answer": "Iron Bowl"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Who returned a missed field goal 109 yards for the winning touchdown in the 2013 'Kick Six' Iron Bowl?",
+        "options": ["Cam Newton", "Tre Mason", "Chris Davis", "Nick Marshall"],
+        "answer": "Chris Davis"
+      }
+    ]
+  },
+  "florida": {
+    "team": "Florida Gators",
+    "stadium": "Ben Hill Griffin Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What sports drink was invented at the University of Florida in 1965?",
+        "options": ["Powerade", "Gatorade", "Vitaminwater", "Body Armor"],
+        "answer": "Gatorade"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the nickname of Florida's Ben Hill Griffin Stadium?",
+        "options": ["The Jungle", "Death Valley", "The Swamp", "The Grove"],
+        "answer": "The Swamp"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Who won Florida's first Heisman Trophy in 1966?",
+        "options": ["Steve Spurrier", "Danny Wuerffel", "Tim Tebow", "Emmitt Smith"],
+        "answer": "Steve Spurrier"
+      }
+    ]
+  },
+  "georgia": {
+    "team": "Georgia Bulldogs",
+    "stadium": "Sanford Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Georgia's live English bulldog mascot?",
+        "options": ["Smokey", "Bevo", "Uga", "Mike"],
+        "answer": "Uga"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Who won the Heisman Trophy at Georgia in 1982?",
+        "options": ["Garrison Hearst", "Knowshon Moreno", "Herschel Walker", "Todd Gurley"],
+        "answer": "Herschel Walker"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "In which two consecutive seasons did Kirby Smart's Georgia win back-to-back national championships?",
+        "options": ["2019 and 2020", "2020 and 2021", "2021 and 2022", "2022 and 2023"],
+        "answer": "2021 and 2022"
+      }
+    ]
+  },
+  "kentucky": {
+    "team": "Kentucky Wildcats",
+    "stadium": "Kroger Field",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What primary color is most associated with Kentucky athletics?",
+        "options": ["Red", "Orange", "Blue", "Purple"],
+        "answer": "Blue"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Who has been Kentucky's head football coach since 2013?",
+        "options": ["Joker Phillips", "Mark Stoops", "Rich Brooks", "Bobby Petrino"],
+        "answer": "Mark Stoops"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "What grocery chain holds the naming rights to Kentucky's football stadium?",
+        "options": ["Publix", "Kroger", "Piggly Wiggly", "Food Lion"],
+        "answer": "Kroger"
+      }
+    ]
+  },
+  "lsu": {
+    "team": "LSU Tigers",
+    "stadium": "Tiger Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of LSU's live tiger mascot?",
+        "options": ["Smokey", "Mike the Tiger", "Tony", "Aubie"],
+        "answer": "Mike the Tiger"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the famous nickname for LSU's Tiger Stadium?",
+        "options": ["The Swamp", "Death Valley", "The Bayou", "Tiger Town"],
+        "answer": "Death Valley"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "How many passing touchdowns did Joe Burrow throw in his 2019 Heisman season at LSU?",
+        "options": ["48", "55", "60", "65"],
+        "answer": "60"
+      }
+    ]
+  },
+  "mississippi_state": {
+    "team": "Mississippi State Bulldogs",
+    "stadium": "Davis Wade Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What metal noisemaker is iconically rung by Mississippi State fans?",
+        "options": ["Cowbell", "Whistle", "Air horn", "Drum"],
+        "answer": "Cowbell"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the rivalry game between Mississippi State and Ole Miss called?",
+        "options": ["Iron Bowl", "Magnolia Bowl", "Egg Bowl", "Battle for the Boot"],
+        "answer": "Egg Bowl"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "What is the name of Mississippi State's home football stadium?",
+        "options": ["Vaught-Hemingway Stadium", "Davis Wade Stadium", "Scott Field", "Tiger Stadium"],
+        "answer": "Davis Wade Stadium"
+      }
+    ]
+  },
+  "missouri": {
+    "team": "Missouri Tigers",
+    "stadium": "Faurot Field at Memorial Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of the playing surface at Missouri's Memorial Stadium?",
+        "options": ["Faurot Field", "Sanford Field", "Jordan Field", "Lambert Field"],
+        "answer": "Faurot Field"
+      },
+      {
+        "difficulty": "medium",
+        "question": "From what conference did Missouri join the SEC in 2012?",
+        "options": ["Big Ten", "Big 12", "Big East", "Conference USA"],
+        "answer": "Big 12"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "What letter is famously laid out in white-painted rocks on a hillside at Missouri's stadium?",
+        "options": ["T", "M", "U", "F"],
+        "answer": "M"
+      }
+    ]
+  },
+  "ole_miss": {
+    "team": "Ole Miss Rebels",
+    "stadium": "Vaught-Hemingway Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Ole Miss's iconic 10-acre tailgating area?",
+        "options": ["The Quad", "The Yard", "The Grove", "The Plaza"],
+        "answer": "The Grove"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Who has been Ole Miss's head football coach since 2020?",
+        "options": ["Hugh Freeze", "Matt Luke", "Lane Kiffin", "Houston Nutt"],
+        "answer": "Lane Kiffin"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Which member of the Manning family played quarterback at Ole Miss from 1968 to 1970?",
+        "options": ["Archie Manning", "Peyton Manning", "Eli Manning", "Cooper Manning"],
+        "answer": "Archie Manning"
+      }
+    ]
+  },
+  "oklahoma": {
+    "team": "Oklahoma Sooners",
+    "stadium": "Gaylord Family Oklahoma Memorial Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Oklahoma's iconic horse-drawn wagon mascot?",
+        "options": ["Sooner Schooner", "Bevo Wagon", "Sooner Express", "Boomer's Wagon"],
+        "answer": "Sooner Schooner"
+      },
+      {
+        "difficulty": "medium",
+        "question": "In what year did Oklahoma officially join the SEC?",
+        "options": ["2021", "2022", "2024", "2025"],
+        "answer": "2024"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "How many consecutive games did Oklahoma win under Bud Wilkinson from 1953 to 1957, still an NCAA record?",
+        "options": ["35", "41", "47", "53"],
+        "answer": "47"
+      }
+    ]
+  },
+  "south_carolina": {
+    "team": "South Carolina Gamecocks",
+    "stadium": "Williams-Brice Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What Finnish DJ's song is famously played at South Carolina home football games?",
+        "options": ["Tiesto", "Avicii", "Darude", "Calvin Harris"],
+        "answer": "Darude"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Who coached South Carolina from 2005 to 2015 after a Hall of Fame career at Florida?",
+        "options": ["Lou Holtz", "Steve Spurrier", "Will Muschamp", "Shane Beamer"],
+        "answer": "Steve Spurrier"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Who won South Carolina's only Heisman Trophy, taking the award in 1980?",
+        "options": ["Marcus Lattimore", "Jadeveon Clowney", "George Rogers", "Stephen Garcia"],
+        "answer": "George Rogers"
+      }
+    ]
+  },
+  "tennessee": {
+    "team": "Tennessee Volunteers",
+    "stadium": "Neyland Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Tennessee's iconic fight song, also a famous bluegrass tune?",
+        "options": ["Dixieland Delight", "Rocky Top", "Sweet Home Alabama", "Country Roads"],
+        "answer": "Rocky Top"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the name of Tennessee's home football stadium?",
+        "options": ["Sanford Stadium", "Neyland Stadium", "Kyle Field", "Williams-Brice Stadium"],
+        "answer": "Neyland Stadium"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "What jersey number did Peyton Manning wear at Tennessee?",
+        "options": ["7", "16", "18", "21"],
+        "answer": "16"
+      }
+    ]
+  },
+  "texas": {
+    "team": "Texas Longhorns",
+    "stadium": "Darrell K Royal-Texas Memorial Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Texas's live longhorn steer mascot?",
+        "options": ["Bevo", "Big Tex", "Smokey", "Reveille"],
+        "answer": "Bevo"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is the famous Texas hand sign called?",
+        "options": ["Horns Up", "Hook 'em Horns", "Longhorn Salute", "Texas Stand"],
+        "answer": "Hook 'em Horns"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Who scored the winning touchdown for Texas in the 2006 Rose Bowl national championship game?",
+        "options": ["Ricky Williams", "Earl Campbell", "Vince Young", "Colt McCoy"],
+        "answer": "Vince Young"
+      }
+    ]
+  },
+  "texas_am": {
+    "team": "Texas A&M Aggies",
+    "stadium": "Kyle Field",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Texas A&M's home football stadium?",
+        "options": ["Kyle Field", "Aggie Stadium", "Bevo Field", "Memorial Stadium"],
+        "answer": "Kyle Field"
+      },
+      {
+        "difficulty": "medium",
+        "question": "What is A&M's most famous tradition, where the student body stands the entire game?",
+        "options": ["The Sixth Man", "The 12th Man", "Aggie Stand", "The Yell"],
+        "answer": "The 12th Man"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Who won the Heisman Trophy as a redshirt freshman at Texas A&M in 2012?",
+        "options": ["Robert Griffin III", "Johnny Manziel", "Kyler Murray", "Baker Mayfield"],
+        "answer": "Johnny Manziel"
+      }
+    ]
+  },
+  "vanderbilt": {
+    "team": "Vanderbilt Commodores",
+    "stadium": "FirstBank Stadium",
+    "questions": [
+      {
+        "difficulty": "easy",
+        "question": "What is the name of Vanderbilt's home football stadium?",
+        "options": ["Dudley Field", "FirstBank Stadium", "Music City Stadium", "Commodore Stadium"],
+        "answer": "FirstBank Stadium"
+      },
+      {
+        "difficulty": "medium",
+        "question": "In 2024, Vanderbilt famously upset which No. 1-ranked team for the first time in school history?",
+        "options": ["Georgia", "Alabama", "Texas", "LSU"],
+        "answer": "Alabama"
+      },
+      {
+        "difficulty": "medium_hard",
+        "question": "Vanderbilt's 2024 starting quarterback Diego Pavia transferred from what school?",
+        "options": ["New Mexico State", "UTEP", "Tulsa", "UConn"],
+        "answer": "New Mexico State"
+      }
+    ]
+  }
+}
