@@ -170,7 +170,7 @@
       <div class="card">
         <h2>Join the game</h2>
         <p style="color: var(--muted); font-size: 13px; margin: 0 0 14px;">
-          16 SEC stadiums.  For each one, drop a pin where you think it is.  Get within 10km
+          16 SEC stadiums.  For each one, drop a pin where you think it is.  Get within 25km
           and you unlock 3 trivia questions that boost your score.  Total across all 16 is
           your leaderboard score.
         </p>
@@ -468,10 +468,10 @@ function showResult(r) {
   $("r-trivia-area").innerHTML = "";
 
   if (r.unlocked) {
-    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 10km, trivia unlocked</div>`;
+    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 25km, trivia unlocked</div>`;
     renderTrivia(r.trivia, r.base_score, r.stadium_key);
   } else {
-    $("r-unlock").innerHTML = `<div class="missed-badge">Not within 10km, no trivia bonus</div>`;
+    $("r-unlock").innerHTML = `<div class="missed-badge">Not within 25km, no trivia bonus</div>`;
     finalizeNoTrivia(r.base_score);
   }
   $("result-overlay").classList.remove("hidden");
