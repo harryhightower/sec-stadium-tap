@@ -8,7 +8,10 @@
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <style>
   :root {
-    --bg: #0d1117;
+    --bg: #0a0e14;
+    --ocean: #0d1b2a;
+    --land: #1b263b;
+    --land-border: #415a77;
     --panel: #161b22;
     --panel2: #21262d;
     --text: #e6edf3;
@@ -34,20 +37,62 @@
     padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
   .tab.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
   main { flex: 1; overflow-y: auto; position: relative; }
-  .view { display: none; padding: 16px; }
+  .view { display: none; }
   .view.active { display: block; }
-  .view#game { padding: 0; display: none; }
-  .view#game.active { display: flex; flex-direction: column; height: 100%; }
+
+  /* JOIN */
+  .view#join { padding: 16px; }
   .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
     padding: 16px; margin-bottom: 12px; }
   .card h2 { margin: 0 0 10px 0; font-size: 16px; }
-  .target { background: var(--panel); border: 1px solid var(--border); padding: 12px 14px;
-    text-align: center; }
-  .target .label { font-size: 11px; color: var(--muted); text-transform: uppercase;
-    letter-spacing: 1.2px; margin-bottom: 4px; }
-  .target .stadium { font-size: 17px; font-weight: 700; line-height: 1.2; }
-  .target .team { font-size: 13px; color: var(--accent); margin-top: 2px; }
-  #map { flex: 1; min-height: 300px; width: 100%; background: #1a1a1a; }
+  input { width: 100%; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; font-size: 15px; margin-bottom: 10px; }
+  input:focus { outline: none; border-color: var(--accent); }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 0.8px; }
+  .error { color: var(--bad); font-size: 13px; margin-top: 6px; min-height: 18px; }
+
+  /* PICKER */
+  .view#picker { padding: 12px; }
+  .progress-bar { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between;
+    align-items: center; font-size: 13px; }
+  .progress-bar .stat { font-weight: 700; color: var(--accent); }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  @media (min-width: 540px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 760px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  .scard { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px; cursor: pointer; position: relative; transition: transform 0.1s, border-color 0.1s; }
+  .scard:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .scard.done { opacity: 0.85; cursor: default; }
+  .scard.done:hover { transform: none; border-color: var(--border); }
+  .scard .num { position: absolute; top: 8px; right: 10px; font-size: 11px; color: var(--muted);
+    font-weight: 700; }
+  .scard .team { font-size: 13px; font-weight: 700; line-height: 1.15; padding-right: 24px; }
+  .scard .stad { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.2; }
+  .scard .row { display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+  .scard .row .pts { font-weight: 700; color: var(--accent); font-size: 14px; }
+  .scard .row .dist { font-size: 10px; color: var(--muted); }
+  .scard.done.unlocked { border-color: var(--good); }
+  .scard.done .play { display: none; }
+  .scard .play { font-size: 11px; color: var(--accent); font-weight: 700;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* GAME */
+  .view#game { display: none; }
+  .view#game.active { display: flex; flex-direction: column; height: 100%; }
+  .target { background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px; }
+  .target .back { background: transparent; color: var(--muted); border: 1px solid var(--border);
+    padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+  .target .info { flex: 1; min-width: 0; }
+  .target .label { font-size: 10px; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1.2px; }
+  .target .stadium { font-size: 16px; font-weight: 700; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .target .team { font-size: 12px; color: var(--accent); }
+  #map { flex: 1; min-height: 300px; width: 100%; background: var(--ocean); }
   .actions { background: var(--panel); border-top: 1px solid var(--border);
     padding: 12px 14px; display: flex; gap: 10px; align-items: center; }
   .actions .hint { font-size: 12px; color: var(--muted); flex: 1; }
@@ -56,29 +101,24 @@
   button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
   button.secondary { background: transparent; color: var(--text); border: 1px solid var(--border);
     padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-  input { width: 100%; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--border);
-    color: var(--text); border-radius: 8px; font-size: 15px; margin-bottom: 10px; }
-  input:focus { outline: none; border-color: var(--accent); }
-  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;
-    text-transform: uppercase; letter-spacing: 0.8px; }
-  .error { color: var(--bad); font-size: 13px; margin-top: 6px; min-height: 18px; }
+
   /* Modal */
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex;
     align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
   .overlay.hidden { display: none; }
   .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
     max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 18px; }
-  .result-big { text-align: center; padding: 8px 0 14px; }
-  .result-big .dist { font-size: 32px; font-weight: 800; color: var(--accent); }
+  .result-big { text-align: center; padding: 4px 0 14px; }
+  .result-big .dist { font-size: 30px; font-weight: 800; color: var(--accent); }
   .result-big .label-sm { font-size: 12px; color: var(--muted); text-transform: uppercase;
-    letter-spacing: 1px; }
+    letter-spacing: 1px; margin-top: 2px; }
   .score-line { display: flex; justify-content: space-between; padding: 8px 0;
     border-bottom: 1px solid var(--border); font-size: 14px; }
   .score-line:last-child { border-bottom: none; font-weight: 700; font-size: 16px; }
   .unlocked-badge { background: var(--good); color: #000; padding: 6px 10px; border-radius: 6px;
-    font-weight: 700; font-size: 13px; display: inline-block; margin: 10px 0; }
+    font-weight: 700; font-size: 13px; display: inline-block; margin: 6px 0 12px; }
   .missed-badge { background: var(--panel2); color: var(--muted); padding: 6px 10px;
-    border-radius: 6px; font-size: 13px; display: inline-block; margin: 10px 0; }
+    border-radius: 6px; font-size: 13px; display: inline-block; margin: 6px 0 12px; }
   /* Trivia */
   .q-block { background: var(--panel2); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
   .q-diff { font-size: 10px; color: var(--accent2); text-transform: uppercase;
@@ -92,6 +132,7 @@
   .opt.correct-reveal { background: rgba(34, 197, 94, 0.2); border-color: var(--good); }
   .opt.wrong-reveal { background: rgba(239, 68, 68, 0.15); border-color: var(--bad); }
   /* Leaderboard */
+  .view#leaderboard, .view#history { padding: 16px; }
   .lb-row { display: grid; grid-template-columns: 30px 1fr 90px 60px; gap: 8px;
     padding: 10px 8px; border-bottom: 1px solid var(--border); align-items: center; font-size: 14px; }
   .lb-row.head { color: var(--muted); font-size: 11px; text-transform: uppercase;
@@ -107,6 +148,10 @@
   .hist-date { font-size: 11px; color: var(--muted); }
   .hist-detail { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .hist-score { color: var(--accent); font-weight: 700; }
+
+  /* Leaflet overrides */
+  .leaflet-container { background: var(--ocean) !important; }
+  .leaflet-control-attribution { display: none !important; }
 </style>
 </head>
 <body>
@@ -114,7 +159,7 @@
   <header>
     <h1><span class="pill">SEC</span>Stadium Tap</h1>
     <div class="tabs" id="tabs" style="display:none;">
-      <button class="tab active" data-view="game">Today</button>
+      <button class="tab active" data-view="picker">Stadiums</button>
       <button class="tab" data-view="leaderboard">Board</button>
       <button class="tab" data-view="history">History</button>
     </div>
@@ -125,8 +170,9 @@
       <div class="card">
         <h2>Join the game</h2>
         <p style="color: var(--muted); font-size: 13px; margin: 0 0 14px;">
-          Each day everyone gets the same SEC stadium.  Drop a pin within 5km of the real spot
-          to unlock 3 trivia questions and a score multiplier.  Best total score wins bragging rights.
+          16 SEC stadiums.  For each one, drop a pin where you think it is.  Get within 5km
+          and you unlock 3 trivia questions that boost your score.  Total across all 16 is
+          your leaderboard score.
         </p>
         <label>Your name</label>
         <input id="join-name" placeholder="e.g. John" maxlength="30">
@@ -137,12 +183,26 @@
       </div>
     </section>
 
+    <!-- STADIUM PICKER VIEW -->
+    <section class="view" id="picker">
+      <div class="progress-bar">
+        <div>Progress</div>
+        <div><span class="stat" id="p-done">0</span> / 16 played
+          &nbsp;·&nbsp;
+          <span class="stat" id="p-score">0</span> pts</div>
+      </div>
+      <div class="grid" id="picker-grid"></div>
+    </section>
+
     <!-- GAME VIEW -->
     <section class="view" id="game">
       <div class="target">
-        <div class="label">Today's stadium</div>
-        <div class="stadium" id="t-stadium"></div>
-        <div class="team" id="t-team"></div>
+        <button class="back" id="back-btn">← Back</button>
+        <div class="info">
+          <div class="label">Find this stadium</div>
+          <div class="stadium" id="t-stadium"></div>
+          <div class="team" id="t-team"></div>
+        </div>
       </div>
       <div id="map"></div>
       <div class="actions">
@@ -151,21 +211,21 @@
       </div>
     </section>
 
-    <!-- LEADERBOARD VIEW -->
+    <!-- LEADERBOARD -->
     <section class="view" id="leaderboard">
       <div class="card">
         <h2>Leaderboard</h2>
         <div class="lb-row head">
-          <div>#</div><div>Name</div><div class="lb-score">Total</div><div class="lb-days">Days</div>
+          <div>#</div><div>Name</div><div class="lb-score">Total</div><div class="lb-days">Done</div>
         </div>
         <div id="lb-body"></div>
       </div>
     </section>
 
-    <!-- HISTORY VIEW -->
+    <!-- HISTORY -->
     <section class="view" id="history">
       <div class="card">
-        <h2>Your history</h2>
+        <h2>Your attempts</h2>
         <div id="hist-body"></div>
       </div>
     </section>
@@ -186,7 +246,7 @@
       <div class="score-line"><span>Trivia correct</span><span id="s-correct"></span></div>
       <div class="score-line"><span>Multiplier</span><span id="s-mult"></span></div>
       <div class="score-line"><span>Final score</span><span id="s-final"></span></div>
-      <button class="primary" id="done-btn" style="width:100%; margin-top:12px;">Done</button>
+      <button class="primary" id="done-btn" style="width:100%; margin-top:12px;">Continue</button>
     </div>
   </div>
 </div>
@@ -194,13 +254,17 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-const API = "";  // same origin
+const API = "";
+const COUNTRIES_URL = "https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json";
+const US_STATES_URL = "https://cdn.jsdelivr.net/gh/PublicaMundi/MappingAPI@master/data/geojson/us-states.json";
+
 let token = localStorage.getItem("sst_token");
 let playerName = localStorage.getItem("sst_name") || "";
-let map, guessMarker, stadiumMarker, line, circle;
+let map, guessMarker, stadiumMarker, line;
 let currentGuess = null;
 let triviaSelections = [null, null, null];
-let todayState = null;
+let activeStadium = null;     // currently selected stadium {key, team, stadium_name, ...}
+let stadiumsCache = [];        // last /api/stadiums response
 
 function $(id) { return document.getElementById(id); }
 
@@ -215,7 +279,7 @@ async function api(path, opts = {}) {
   return res.json();
 }
 
-// JOIN
+// ============ JOIN ============
 $("join-btn").addEventListener("click", async () => {
   const name = $("join-name").value.trim();
   const code = $("join-code").value.trim();
@@ -233,11 +297,10 @@ $("join-btn").addEventListener("click", async () => {
 
 function showApp() {
   $("tabs").style.display = "flex";
-  switchView("game");
-  loadToday();
+  switchView("picker");
 }
 
-// TABS
+// ============ TABS ============
 document.querySelectorAll(".tab").forEach(t => {
   t.addEventListener("click", () => switchView(t.dataset.view));
 });
@@ -246,20 +309,53 @@ function switchView(name) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   $(name).classList.add("active");
   document.querySelector(`.tab[data-view="${name}"]`)?.classList.add("active");
-  if (name === "game") { setTimeout(() => map && map.invalidateSize(), 100); }
+  if (name === "picker") loadPicker();
   if (name === "leaderboard") loadLeaderboard();
   if (name === "history") loadHistory();
+  if (name === "game") setTimeout(() => map && map.invalidateSize(), 100);
 }
 
-// MAP
-function initMap() {
+// ============ MAP (blank globe) ============
+async function initMap() {
   if (map) return;
-  map = L.map("map", { zoomControl: true, attributionControl: false }).setView([33, -88], 5);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 18, subdomains: "abcd"
-  }).addTo(map);
+  map = L.map("map", {
+    zoomControl: true,
+    attributionControl: false,
+    minZoom: 2,
+    maxZoom: 5,
+    worldCopyJump: true,
+    maxBounds: [[-85, -200], [85, 200]],
+  }).setView([20, 0], 2);
+
+  // Load and render country borders
+  try {
+    const countries = await fetch(COUNTRIES_URL).then(r => r.json());
+    L.geoJSON(countries, {
+      style: {
+        fillColor: "#1b263b",
+        fillOpacity: 1,
+        color: "#415a77",
+        weight: 0.6,
+      }
+    }).addTo(map);
+  } catch (e) { console.error("country load fail", e); }
+
+  // US states overlay (helps disambiguate the SEC region)
+  try {
+    const states = await fetch(US_STATES_URL).then(r => r.json());
+    L.geoJSON(states, {
+      style: {
+        fillColor: "transparent",
+        fillOpacity: 0,
+        color: "#415a77",
+        weight: 0.4,
+        opacity: 0.7,
+      }
+    }).addTo(map);
+  } catch (e) { console.error("state load fail", e); }
+
   map.on("click", (e) => {
-    if (todayState && todayState.played) return;
+    if (!activeStadium || activeStadium.played) return;
     if (guessMarker) map.removeLayer(guessMarker);
     guessMarker = L.marker(e.latlng).addTo(map);
     currentGuess = e.latlng;
@@ -268,60 +364,85 @@ function initMap() {
   });
 }
 
-// LOAD TODAY
-async function loadToday() {
-  initMap();
-  try {
-    todayState = await api("/api/today");
-    $("t-stadium").textContent = todayState.stadium_name;
-    $("t-team").textContent = todayState.team;
-    if (todayState.played) {
-      renderPlayed(todayState);
-    } else {
-      $("hint").textContent = "Tap the map to drop your pin";
-      $("submit-btn").disabled = true;
-      $("submit-btn").textContent = "Submit guess";
-      clearMapLayers();
-    }
-  } catch (e) {
-    if (e.message.includes("token") || e.message.includes("Invalid")) {
-      localStorage.removeItem("sst_token");
-      location.reload();
-    }
-  }
-}
-
 function clearMapLayers() {
-  [guessMarker, stadiumMarker, line, circle].forEach(l => l && map.removeLayer(l));
-  guessMarker = stadiumMarker = line = circle = null;
+  [guessMarker, stadiumMarker, line].forEach(l => l && map.removeLayer(l));
+  guessMarker = stadiumMarker = line = null;
   currentGuess = null;
 }
 
-function renderPlayed(state) {
-  clearMapLayers();
-  const r = state.result;
-  guessMarker = L.marker([r.guess_lat, r.guess_lng]).addTo(map);
-  stadiumMarker = L.marker([r.stadium_lat, r.stadium_lng],
-    { icon: L.divIcon({ className: "", html:
-      `<div style="background:#22c55e;width:14px;height:14px;border-radius:50%;border:2px solid #fff;"></div>`,
-      iconSize: [14,14], iconAnchor: [7,7] }) }).addTo(map);
-  line = L.polyline([[r.guess_lat, r.guess_lng], [r.stadium_lat, r.stadium_lng]],
-    { color: "#f97316", weight: 2, dashArray: "5,8" }).addTo(map);
-  map.fitBounds(line.getBounds(), { padding: [40, 40] });
-  $("hint").textContent =
-    `${r.distance_km.toFixed(2)} km · ${r.final_score} pts · come back tomorrow`;
-  $("submit-btn").disabled = true;
-  $("submit-btn").textContent = "Played";
+// ============ PICKER ============
+async function loadPicker() {
+  try {
+    stadiumsCache = await api("/api/stadiums");
+  } catch (e) {
+    if (e.message.includes("token") || e.message.includes("Invalid")) {
+      localStorage.removeItem("sst_token"); location.reload(); return;
+    }
+    return;
+  }
+  const done = stadiumsCache.filter(s => s.played).length;
+  const total = stadiumsCache.reduce((sum, s) => sum + (s.result ? s.result.final_score : 0), 0);
+  $("p-done").textContent = done;
+  $("p-score").textContent = total;
+
+  const grid = $("picker-grid");
+  grid.innerHTML = "";
+  stadiumsCache.forEach(s => {
+    const card = document.createElement("div");
+    card.className = "scard" + (s.played ? " done" : "") +
+      (s.result && s.result.unlocked ? " unlocked" : "");
+    let bottom;
+    if (s.played) {
+      bottom = `<div class="row">
+        <span class="dist">${s.result.distance_km.toFixed(1)} km</span>
+        <span class="pts">${s.result.final_score} pts</span>
+      </div>`;
+    } else {
+      bottom = `<div class="play">Tap to play →</div>`;
+    }
+    card.innerHTML = `
+      <div class="num">#${s.number}</div>
+      <div class="team">${s.team}</div>
+      <div class="stad">${s.stadium_name}</div>
+      ${bottom}
+    `;
+    if (!s.played) {
+      card.addEventListener("click", () => openStadium(s));
+    }
+    grid.appendChild(card);
+  });
 }
 
-// SUBMIT GUESS
+// ============ GAME ============
+async function openStadium(s) {
+  activeStadium = s;
+  $("t-stadium").textContent = s.stadium_name;
+  $("t-team").textContent = s.team;
+  switchView("game");
+  await initMap();
+  clearMapLayers();
+  map.setView([20, 0], 2);
+  $("hint").textContent = "Tap the map to drop your pin";
+  $("submit-btn").disabled = true;
+  $("submit-btn").textContent = "Submit guess";
+  setTimeout(() => map.invalidateSize(), 80);
+}
+
+$("back-btn").addEventListener("click", () => {
+  activeStadium = null;
+  switchView("picker");
+});
+
 $("submit-btn").addEventListener("click", async () => {
-  if (!currentGuess) return;
+  if (!currentGuess || !activeStadium) return;
   $("submit-btn").disabled = true;
   $("submit-btn").textContent = "Submitting...";
   try {
     const r = await api("/api/guess", { method: "POST",
-      body: JSON.stringify({ lat: currentGuess.lat, lng: currentGuess.lng }) });
+      body: JSON.stringify({
+        stadium_key: activeStadium.key,
+        lat: currentGuess.lat, lng: currentGuess.lng
+      }) });
     showResult(r);
   } catch (e) {
     alert(e.message);
@@ -330,16 +451,16 @@ $("submit-btn").addEventListener("click", async () => {
   }
 });
 
-// RESULT FLOW
 function showResult(r) {
-  // draw real spot
   stadiumMarker = L.marker([r.stadium_lat, r.stadium_lng],
     { icon: L.divIcon({ className: "", html:
       `<div style="background:#22c55e;width:14px;height:14px;border-radius:50%;border:2px solid #fff;"></div>`,
       iconSize: [14,14], iconAnchor: [7,7] }) }).addTo(map);
   line = L.polyline([[currentGuess.lat, currentGuess.lng], [r.stadium_lat, r.stadium_lng]],
     { color: "#f97316", weight: 2, dashArray: "5,8" }).addTo(map);
-  map.fitBounds(line.getBounds(), { padding: [40, 40] });
+  try {
+    map.fitBounds(line.getBounds(), { padding: [40, 40], maxZoom: 5 });
+  } catch (e) {}
 
   $("r-dist").textContent = r.distance_km.toFixed(2) + " km";
   $("r-stadium").textContent = r.stadium_name;
@@ -347,17 +468,16 @@ function showResult(r) {
   $("r-trivia-area").innerHTML = "";
 
   if (r.unlocked) {
-    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 5km — trivia unlocked</div>`;
-    renderTrivia(r.trivia, r.base_score);
+    $("r-unlock").innerHTML = `<div class="unlocked-badge">✓ Within 5km, trivia unlocked</div>`;
+    renderTrivia(r.trivia, r.base_score, r.stadium_key);
   } else {
     $("r-unlock").innerHTML = `<div class="missed-badge">Not within 5km, no trivia bonus</div>`;
-    // immediately show summary with base only
     finalizeNoTrivia(r.base_score);
   }
   $("result-overlay").classList.remove("hidden");
 }
 
-function renderTrivia(trivia, baseScore) {
+function renderTrivia(trivia, baseScore, stadiumKey) {
   triviaSelections = [null, null, null];
   const area = $("r-trivia-area");
   area.innerHTML = "";
@@ -380,12 +500,12 @@ function renderTrivia(trivia, baseScore) {
       el.parentElement.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
       el.classList.add("selected");
       triviaSelections[qIdx] = val;
-      checkTriviaReady(baseScore);
+      checkTriviaReady(baseScore, stadiumKey);
     });
   });
 }
 
-function checkTriviaReady(baseScore) {
+function checkTriviaReady(baseScore, stadiumKey) {
   if (triviaSelections.every(a => a !== null)) {
     if ($("submit-trivia-btn")) return;
     const btn = document.createElement("button");
@@ -393,18 +513,17 @@ function checkTriviaReady(baseScore) {
     btn.id = "submit-trivia-btn";
     btn.style.width = "100%";
     btn.textContent = "Submit answers";
-    btn.addEventListener("click", () => submitTrivia(baseScore));
+    btn.addEventListener("click", () => submitTrivia(baseScore, stadiumKey));
     $("r-trivia-area").appendChild(btn);
   }
 }
 
-async function submitTrivia(baseScore) {
+async function submitTrivia(baseScore, stadiumKey) {
   $("submit-trivia-btn").disabled = true;
   $("submit-trivia-btn").textContent = "Scoring...";
   try {
     const r = await api("/api/trivia", { method: "POST",
-      body: JSON.stringify({ answers: triviaSelections }) });
-    // reveal correct answers visually
+      body: JSON.stringify({ stadium_key: stadiumKey, answers: triviaSelections }) });
     document.querySelectorAll(".opts").forEach((opts, i) => {
       const fb = r.feedback[i];
       opts.querySelectorAll(".opt").forEach(o => {
@@ -431,36 +550,43 @@ function finalizeNoTrivia(baseScore) {
 
 $("done-btn").addEventListener("click", () => {
   $("result-overlay").classList.add("hidden");
-  loadToday();
+  activeStadium = null;
+  switchView("picker");
 });
 
-// LEADERBOARD
+// ============ LEADERBOARD ============
 async function loadLeaderboard() {
   try {
     const rows = await api("/api/leaderboard");
     const body = $("lb-body");
-    if (!rows.length) { body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No scores yet.  Be the first.</p>`; return; }
+    if (!rows.length) {
+      body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No scores yet, play a stadium.</p>`;
+      return;
+    }
     body.innerHTML = rows.map((r, i) => `
       <div class="lb-row">
         <div class="lb-rank">${i + 1}</div>
         <div>${r.name}</div>
         <div class="lb-score">${r.total_score}</div>
-        <div class="lb-days">${r.days_played}</div>
+        <div class="lb-days">${r.stadiums_played}/16</div>
       </div>`).join("");
   } catch (e) { console.error(e); }
 }
 
-// HISTORY
+// ============ HISTORY ============
 async function loadHistory() {
   try {
     const rows = await api("/api/history");
     const body = $("hist-body");
-    if (!rows.length) { body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No plays yet.</p>`; return; }
+    if (!rows.length) {
+      body.innerHTML = `<p style="color:var(--muted);font-size:13px;">No attempts yet.</p>`;
+      return;
+    }
     body.innerHTML = rows.map(r => `
       <div class="hist-row">
         <div class="hist-top">
           <span class="hist-stadium">${r.stadium_name}</span>
-          <span class="hist-date">${r.play_date}</span>
+          <span class="hist-date">${r.created_at.slice(0,10)}</span>
         </div>
         <div class="hist-detail">
           ${r.distance_km.toFixed(2)} km · base ${r.base_score} ·
@@ -471,7 +597,7 @@ async function loadHistory() {
   } catch (e) { console.error(e); }
 }
 
-// BOOT
+// ============ BOOT ============
 if (token) { showApp(); }
 </script>
 </body>
